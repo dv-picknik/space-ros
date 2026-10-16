@@ -94,13 +94,13 @@ jobs:
 
   combine-main-image-manifests:
     needs: space-ros-main-image
-    if: ${{ github.ref_type == 'tag' || github.ref_name == 'main' }}
+    if: ${{ github.ref_type == 'tag' || github.ref_name == 'main' || github.ref_name == 'arm-builds-v3-fork-test' }}
     runs-on: ubuntu-24.04
     permissions:
       packages: write
     env:
       IMAGE_TAG: "${{ github.head_ref || github.ref_name }}"
-      GHCR_IMAGE_NAME: "ghcr.io/space-ros/space-ros"
+      GHCR_IMAGE_NAME: "ghcr.io/${{ github.repository }}"
       DOCKER_HUB_USERNAME: osrfbot
       DOCKER_HUB_TOKEN: ${{ secrets.DOCKER_HUB_RW_TOKEN }}
       DOCKER_HUB_IMAGE_NAME: "osrf/space-ros"
@@ -118,7 +118,7 @@ jobs:
 
       # Push the multi-arch main build to GHCR
       - name: Push the main spaceros image to GHCR
-        if: ${{ github.ref_name == 'main' }}
+        if: ${{ github.ref_name == 'main' || github.ref_name == 'arm-builds-v3-fork-test' }}
         run: |
           docker buildx imagetools create \
             --tag "$GHCR_IMAGE_NAME:$IMAGE_TAG" \
@@ -127,6 +127,7 @@ jobs:
 
       # Push both tagged releases and the latest main builds to Dockerhub
       - name: Push spaceros images to Dockerhub
+        if: ${{ github.ref_type == 'tag' || github.ref_name == 'main' }}
         run: |
           # We must login using the password and not the action, as the action only supports tokens.
           echo "$DOCKER_HUB_TOKEN" | docker login --username "$DOCKER_HUB_USERNAME" --password-stdin
