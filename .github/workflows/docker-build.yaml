@@ -55,7 +55,7 @@ jobs:
     env:
       IMAGE_TAG: "${{ github.head_ref || github.ref_name }}"
       VCS_REF: ${{ github.sha }}
-      GHCR_IMAGE_NAME: "ghcr.io/space-ros/space-ros"
+      GHCR_IMAGE_NAME: "ghcr.io/${{ github.repository }}"
 
     steps:
       # Clears preinstalled toolchains, avoiding GitHub runner disk space issues
