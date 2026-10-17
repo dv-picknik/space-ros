@@ -9,6 +9,7 @@ on:
     - cron: "0 11 * * *"
 jobs:
   build-test:
+    if: ${{ github.ref_name != 'arm-builds-v3-fork-test' }}
     runs-on: ubuntu-24.04
     steps:
       # Clears preinstalled toolchains, avoiding GitHub runner disk space issues
